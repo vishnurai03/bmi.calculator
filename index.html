@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator | Premium Health Calculator</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRE603EQ4Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TRE603EQ4Z');
+    </script>
+    
+    <!-- JSON-LD FAQ Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "What is my bmi calculator?", "acceptedAnswer": { "@type": "Answer", "text": "A BMI calculator evaluates your body mass index based on your height and weight to estimate whether you are at a healthy body weight." } },
+        { "@type": "Question", "name": "What's my bmi calculator?", "acceptedAnswer": { "@type": "Answer", "text": "It is an online calculation tool used to categorize your current weight into healthy, underweight, overweight, or obese ranges based on standard formulas." } },
+        { "@type": "Question", "name": "What is my bmi woman calculator?", "acceptedAnswer": { "@type": "Answer", "text": "A BMI calculator for women works exactly the same as for men, using the standard BMI formula to evaluate body weight against height." } },
+        { "@type": "Question", "name": "What is bmi calculator?", "acceptedAnswer": { "@type": "Answer", "text": "A BMI calculator is a standard mathematical tool used globally to estimate body fat and assess potential health risks related to weight." } },
+        { "@type": "Question", "name": "What are the limitations of the BMI calculator?", "acceptedAnswer": { "@type": "Answer", "text": "BMI does not account for muscle mass, bone density, overall body composition, or distribution of fat. It can occasionally misclassify highly muscular individuals." } },
+        { "@type": "Question", "name": "What is the purpose of calculating BMI?", "acceptedAnswer": { "@type": "Answer", "text": "The purpose is to provide a quick, non-invasive screening method to identify potential weight categories that may lead to health issues." } },
+        { "@type": "Question", "name": "What is a good BMI for a man?", "acceptedAnswer": { "@type": "Answer", "text": "A good, healthy BMI for an adult man generally falls between 18.5 and 24.9." } },
+        { "@type": "Question", "name": "What is a good BMI for a woman?", "acceptedAnswer": { "@type": "Answer", "text": "A healthy BMI for an adult woman also typically falls within the 18.5 to 24.9 range." } }
+      ]
+    }
+    </script>
+
+    <style>
+        /* =========================================================
+           1. CSS VARIABLES & THEME
+           ========================================================= */
+        :root {
+            --bg: #F8F9FA; --surface: #FFFFFF; --text: #2D3436; --muted: #636E72;
+            --blue: #E3F0FF; --blue-hover: #D0E5FF; --pink: #FFE3EC; --mint: #E3FFF0; --peach: #FFEBE3;
+            --status-healthy: #4CAF50; --status-under: #3498DB; --status-over: #F39C12; --status-obese: #E74C3C;
+
+            --shadow-light-color: rgba(255, 255, 255, 0.9); --shadow-dark-color: rgba(174, 184, 196, 0.35);
+            
+            --clay-out: 8px 8px 16px var(--shadow-dark-color), -8px -8px 16px var(--shadow-light-color);
+            --clay-out-sm: 4px 4px 8px var(--shadow-dark-color), -4px -4px 8px var(--shadow-light-color);
+            --clay-in: inset 6px 6px 12px var(--shadow-dark-color), inset -6px -6px 12px var(--shadow-light-color);
+            --clay-btn: 6px 6px 12px var(--shadow-dark-color), -6px -6px 12px var(--shadow-light-color), inset 2px 2px 4px rgba(255,255,255,1), inset -2px -2px 4px rgba(0,0,0,0.02);
+
+            --radius-sm: 16px; --radius-md: 24px; --radius-lg: 32px; --radius-pill: 100px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #121212; --surface: #1E1E1E; --text: #E0E0E0; --muted: #A0A0A0;
+            --blue: #1A2634; --pink: #331A22; --mint: #1A3326; --peach: #33221A;
+            --shadow-light-color: rgba(255, 255, 255, 0.03); --shadow-dark-color: rgba(0, 0, 0, 0.6);
+            --clay-btn: 6px 6px 12px var(--shadow-dark-color), -6px -6px 12px var(--shadow-light-color), inset 2px 2px 4px rgba(255,255,255,0.05), inset -2px -2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* =========================================================
+           2. BASE, LAYOUT & NAVIGATION
+           ========================================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+        .ambient-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: radial-gradient(circle at 15% 20%, rgba(227, 240, 255, 0.3) 0%, transparent 40%), radial-gradient(circle at 85% 30%, rgba(255, 227, 236, 0.2) 0%, transparent 40%), radial-gradient(circle at 50% 80%, rgba(227, 255, 240, 0.2) 0%, transparent 40%); filter: blur(40px); }
+        h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.5px; }
+        .text-center { text-align: center; } .text-muted { color: var(--muted); font-size: 0.95rem; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; flex: 1; width: 100%;}
+        
+        header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 0; margin-bottom: 2rem; flex-wrap: wrap; gap: 20px; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo-icon { width: 32px; height: 32px; background: var(--blue); border-radius: 12px; box-shadow: var(--clay-btn); display: flex; align-items: center; justify-content: center; }
+        
+        .main-nav { display: flex; gap: 1.5rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
+        .main-nav a { color: var(--muted); text-decoration: none; transition: var(--transition); cursor: pointer; }
+        .main-nav a:hover, .main-nav a.active { color: var(--text); }
+        @media (max-width: 850px) { .main-nav { order: 3; width: 100%; justify-content: center; margin-top: 0.5rem; flex-wrap: wrap;} }
+
+        /* SPA Page Sections */
+        .page-section { display: none; animation: fadeIn 0.4s ease; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================================
+           3. UI COMPONENTS (Buttons, Forms, Panels)
+           ========================================================= */
+        .segment-control { display: flex; background: var(--bg); border-radius: var(--radius-pill); box-shadow: var(--clay-in); padding: 6px; gap: 4px; }
+        @media (max-width: 600px) { .segment-control.sex-segment { flex-direction: column; border-radius: 16px; } .segment-control.sex-segment .segment-btn { border-radius: 12px; } }
+        .segment-btn { flex: 1; text-align: center; padding: 10px 16px; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: var(--transition); color: var(--muted); border: none; background: transparent; }
+        .segment-btn.active { background: var(--surface); color: var(--text); box-shadow: var(--clay-btn); }
+        
+        .clay-panel { background: var(--surface); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--clay-out); margin-bottom: 2rem; line-height: 1.8; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.75rem; font-size: 0.95rem; color: var(--text); }
+        
+        .input-group { display: flex; align-items: center; background: var(--bg); border-radius: var(--radius-sm); box-shadow: var(--clay-in); padding: 8px 16px; transition: var(--transition); }
+        
+        /* FIX: Separated inputs and selects to prevent 100% width overlap */
+        .input-group input, .input-group select, .input-group textarea { border: none; background: transparent; color: var(--text); outline: none; font-family: inherit;}
+        .input-group input { flex: 1; width: 100%; min-width: 50px; padding: 12px 0; font-size: 1.1rem; font-weight: 600; }
+        .input-group select { padding: 8px 12px; border-radius: 12px; font-weight: 600; box-shadow: var(--clay-out-sm); cursor: pointer; margin-left: 12px; background: var(--surface); width: max-content; }
+        .input-group textarea { resize: vertical; width: 100%; min-height: 120px; padding: 12px 0; font-size: 1rem;}
+        
+        .multi-input { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .multi-input .input-group-wrapper { flex: 1; min-width: 200px; }
+        
+        .btn-primary { display: block; width: 100%; padding: 1.25rem; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-pill); font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.4), -4px -4px 12px var(--shadow-light-color); transition: var(--transition); margin-top: 2rem; }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-secondary { display: block; width: 100%; padding: 1rem; background: transparent; color: var(--muted); border: none; font-weight: 600; cursor: pointer; margin-top: 1rem; border-radius: var(--radius-pill); transition: var(--transition); }
+        .btn-secondary:hover { color: var(--text); background: var(--bg); }
+        .error-msg { color: #E74C3C; font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600; display: none; animation: slideUp 0.3s ease; }
+        .hidden { display: none !important; }
+
+        /* =========================================================
+           4. CALCULATOR SPECIFICS & RESULTS
+           ========================================================= */
+        .hero { text-align: center; margin-bottom: 2rem; }
+        .hero h1 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom: 1rem; background: linear-gradient(135deg, var(--text), var(--muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        
+        .mode-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 3rem; margin-bottom: 3rem; }
+        .mode-card { background: var(--surface); border-radius: var(--radius-md); padding: 1.5rem; text-align: left; cursor: pointer; box-shadow: var(--clay-out); transition: var(--transition); border: 2px solid transparent; }
+        .mode-card:hover { transform: translateY(-4px); }
+        .mode-card.active { box-shadow: var(--clay-in); border: 2px solid #3498DB; background: var(--bg); }
+        .mode-icon { width: 48px; height: 48px; border-radius: 16px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: var(--clay-out-sm); }
+        .mode-card:nth-child(1) .mode-icon { background: var(--blue); } .mode-card:nth-child(2) .mode-icon { background: var(--pink); } .mode-card:nth-child(3) .mode-icon { background: var(--mint); } .mode-card:nth-child(4) .mode-icon { background: var(--peach); }
+
+        .app-grid { display: grid; grid-template-columns: 1fr 350px; gap: 2.5rem; align-items: start; }
+        @media (max-width: 850px) { .app-grid { grid-template-columns: 1fr; } .companion-panel { order: -1; position: sticky; top: 1rem; z-index: 10;} }
+        
+        .results-panel { background: var(--surface); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--clay-out); margin-top: 1rem; animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: none; }
+        .results-panel.show { display: block; }
+        .result-primary { text-align: center; margin-bottom: 2rem; }
+        .result-primary h2 { font-size: 1.2rem; color: var(--muted); margin-bottom: 0.5rem; }
+        .result-number { font-size: 4rem; font-weight: 800; line-height: 1; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--text), var(--muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .result-label { display: inline-block; padding: 6px 16px; border-radius: var(--radius-pill); font-weight: 700; font-size: 0.95rem; box-shadow: var(--clay-in); color: var(--text); }
+        
+        .bmi-scale { display: flex; height: 16px; border-radius: 8px; overflow: hidden; margin: 2rem 0 1rem; box-shadow: var(--clay-in); position: relative; }
+        .scale-segment { height: 100%; } .scale-under { background: var(--status-under); width: 25%; opacity: 0.7;} .scale-healthy { background: var(--status-healthy); width: 35%; opacity: 0.7;} .scale-over { background: var(--status-over); width: 20%; opacity: 0.7;} .scale-obese { background: var(--status-obese); width: 20%; opacity: 0.7;}
+        .scale-marker { position: absolute; top: -4px; width: 4px; height: 24px; background: var(--text); border-radius: 2px; transition: left 1s cubic-bezier(0.25, 1, 0.5, 1); left: 0%; box-shadow: 0 0 4px rgba(0,0,0,0.5); }
+        
+        .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+        @media (max-width: 600px) { .insight-grid { grid-template-columns: 1fr; } }
+        .insight-card { background: var(--bg); padding: 1.5rem; border-radius: var(--radius-md); box-shadow: var(--clay-in); }
+        .insight-card h4 { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 0.5rem;}
+        .insight-card .value { font-size: 1.5rem; font-weight: 700; color: var(--text); }
+        .insight-card .desc { font-size: 0.9rem; margin-top: 0.5rem; color: var(--muted); }
+        
+        .faq-section .insight-card { text-align: left; margin-bottom: 1.5rem; }
+        .faq-section .insight-card h4 { color: var(--text); font-size: 1.1rem; text-transform: none; font-weight: 600;}
+
+        /* =========================================================
+           5. MASCOT & ANIMATIONS
+           ========================================================= */
+        .companion-panel { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .speech-bubble { background: var(--surface); padding: 1.25rem 1.5rem; border-radius: 24px; border-bottom-right-radius: 4px; box-shadow: var(--clay-out); margin-bottom: 1rem; position: relative; max-width: 100%; animation: float 4s ease-in-out infinite; font-weight: 600; color: var(--text); }
+        .speech-bubble::after { content: ''; position: absolute; bottom: -10px; right: 24px; border-width: 10px 10px 0; border-style: solid; border-color: var(--surface) transparent transparent transparent; }
+        .character-container { position: relative; perspective: 1000px; }
+        .mascot { width: 100%; height: 100%; filter: drop-shadow(4px 6px 8px var(--shadow-dark-color)); transition: var(--transition); }
+        .mascot .body { fill: var(--blue); transition: fill 0.5s; } .mascot-pink .body { fill: var(--pink); } .mascot-mint .body { fill: var(--mint); } .mascot-peach .body { fill: var(--peach); }
+        .eye { fill: var(--text); transition: all 0.2s; }
+        .mouth { stroke: var(--text); stroke-width: 4; stroke-linecap: round; fill: none; transition: all 0.3s; }
+        .mustache { fill: var(--text); transition: all 0.3s; }
+        .cheek { fill: rgba(255,100,100,0.3); opacity: 0; transition: opacity 0.3s; }
+        .arm { stroke: var(--text); stroke-width: 5; stroke-linecap: round; fill: none; transition: all 0.3s; }
+        
+        /* Mascot States */
+        .char-idle .mascot { animation: breathe 3s infinite ease-in-out; } .char-idle .eye { transform-origin: center; animation: blink 4s infinite; }
+        .char-thinking .mascot { transform: rotate(5deg) translateY(-5px); } .char-thinking .eye-left { transform: scaleY(0.8) translateY(-2px); } .char-thinking .eye-right { transform: scaleY(1.1); } .char-thinking .mouth { d: path('M 75 110 Q 85 108 95 110'); } .char-thinking .mustache { transform: translateY(10px); } .char-thinking .arm-right { transform: rotate(-20deg) translateY(-10px); }
+        .char-happy .mascot { animation: bounce 1s cubic-bezier(0.28, 0.84, 0.42, 1); } .char-happy .eye { d: path('M 60 75 Q 65 65 70 75'); fill: none; stroke: var(--text); stroke-width:4; } .char-happy .mouth { d: path('M 70 105 Q 85 125 100 105'); fill: #FF8A8A; stroke: none; } .char-happy .mustache { transform: translateY(5px); } .char-happy .cheek { opacity: 1; } .char-happy .arm-left { transform: rotate(140deg) translate(-20px, -40px); } .char-happy .arm-right { transform: rotate(-140deg) translate(20px, -40px); }
+        .char-support .mascot { transform: translateY(2px); } .char-support .mouth { d: path('M 75 112 Q 85 108 95 112'); } .char-support .mustache { transform: translateY(12px); } .char-support .eye { transform-origin: center; transform: scaleY(0.9); }
+
+        .standalone-mascot { width: 120px; height: 120px; margin: 0 auto 2rem; animation: float 4s ease-in-out infinite; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02) translateY(-2px); } }
+        @keyframes blink { 0%, 96%, 100% { transform: scaleY(1); } 98% { transform: scaleY(0.1); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px) scaleY(1.05); } 60% { transform: translateY(5px) scaleY(0.95); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================================
+           6. FOOTER
+           ========================================================= */
+        footer { text-align: center; padding: 3rem 1.5rem; color: var(--muted); font-size: 0.9rem; margin-top: auto;}
+        .footer-nav { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .footer-nav a { color: var(--muted); text-decoration: none; font-weight: 600; transition: var(--transition); cursor: pointer;}
+        .footer-nav a:hover { color: var(--text); }
+        
+        .page-header { text-align: center; margin-bottom: 3rem; }
+        .page-header h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg"></div>
+
+    <div class="container">
+        <!-- GLOBAL HEADER -->
+        <header>
+            <a href="#calculator" onclick="navigateTo('calculator', event)" class="logo">
+                <div class="logo-icon">✨</div>
+                BMI Calculator
+            </a>
+            
+            <nav class="main-nav">
+                <a href="#calculator" onclick="navigateTo('calculator', event)" class="active">Calculator</a>
+                <a href="#about" onclick="navigateTo('about', event)">About Us</a>
+                <a href="#contact" onclick="navigateTo('contact', event)">Contact Us</a>
+                <a href="#privacy" onclick="navigateTo('privacy', event)">Privacy Policy</a>
+                <a href="#terms" onclick="navigateTo('terms', event)">Terms</a>
+            </nav>
+
+            <div class="theme-toggle segment-control" style="width: max-content;">
+                <button id="theme-light" class="segment-btn">☀️ Light</button>
+                <button id="theme-dark" class="segment-btn active">🌙 Dark</button>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <!-- =======================================================
+                 PAGE 1: CALCULATOR (DEFAULT)
+                 ======================================================= -->
+            <div id="calculator" class="page-section active">
+                <section class="hero">
+                    <h1>
+                        Check Your Health Condition
+                        <div class="character-container char-idle mascot-blue" id="mascot-container" style="width: 70px; height: 70px;">
+                            <svg viewBox="0 0 160 160" class="mascot" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="25" y="40" width="110" height="100" rx="45" class="body" />
+                                <ellipse cx="50" cy="95" rx="8" ry="5" class="cheek" />
+                                <ellipse cx="110" cy="95" rx="8" ry="5" class="cheek" />
+                                <circle cx="55" cy="75" r="5" class="eye eye-left" />
+                                <circle cx="105" cy="75" r="5" class="eye eye-right" />
+                                <path d="M 65 90 Q 80 82 95 90 Q 80 93 65 90 Z" class="mustache" />
+                                <path d="M 70 100 Q 80 110 90 100" class="mouth" />
+                                <path d="M 25 80 Q 10 90 15 110" class="arm arm-left" />
+                                <path d="M 135 80 Q 150 90 145 110" class="arm arm-right" />
+                                <path d="M 50 140 L 50 150" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
+                                <path d="M 110 140 L 110 150" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                    </h1>
+                </section>
+
+                <div class="app-grid">
+                    <div class="clay-panel">
+                        <form id="health-form" novalidate>
+                            <div class="form-group multi-input">
+                                <div class="input-group-wrapper">
+                                    <label for="age">Age</label>
+                                    <div class="input-group"><input type="number" id="age" name="age" min="1" max="120" placeholder="e.g. 25"></div>
+                                    <div class="error-msg" id="error-age">Please enter a valid age.</div>
+                                </div>
+                                <div class="input-group-wrapper" style="flex: 2;">
+                                    <label>Gender / Sex</label>
+                                    <div class="segment-control sex-segment" id="sex-group">
+                                        <button type="button" class="segment-btn active" data-value="male">Male</button>
+                                        <button type="button" class="segment-btn" data-value="female">Female</button>
+                                        <button type="button" class="segment-btn" data-value="other">Prefer not to say</button>
+                                    </div>
+                                    <input type="hidden" id="sex" name="sex" value="male">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Height</label>
+                                <div class="multi-input">
+                                    <div class="input-group">
+                                        <input type="number" id="height-main" placeholder="175" step="0.1">
+                                        <select id="height-unit" aria-label="Height Unit"><option value="cm">cm</option><option value="m">m</option><option value="ft-in">ft & in</option></select>
+                                    </div>
+                                    <div class="input-group hidden" id="height-sub-group">
+                                        <input type="number" id="height-sub" placeholder="0">
+                                        <div style="padding: 8px 12px; color: var(--muted); font-weight: 600;">in</div>
+                                    </div>
+                                </div>
+                                <div class="error-msg" id="error-height">Please enter a valid height.</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Weight</label>
+                                <div class="multi-input">
+                                    <div class="input-group">
+                                        <input type="number" id="weight-main" placeholder="70" step="0.1">
+                                        <select id="weight-unit" aria-label="Weight Unit"><option value="kg">kg</option><option value="g">g</option><option value="lb">lb</option><option value="st">st</option><option value="st-lb">st & lb</option></select>
+                                    </div>
+                                    <div class="input-group hidden" id="weight-sub-group">
+                                        <input type="number" id="weight-sub" placeholder="0" step="0.1">
+                                        <div style="padding: 8px 12px; color: var(--muted); font-weight: 600;">lb</div>
+                                    </div>
+                                </div>
+                                <div class="error-msg" id="error-weight">Please enter a valid weight.</div>
+                            </div>
+                            <div id="activity-section" class="form-group hidden" style="margin-top: 2rem;">
+                                <label>Activity Level</label>
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div class="segment-control" style="flex-direction: column; padding: 10px;">
+                                        <button type="button" class="segment-btn active" data-value="1.2" style="text-align: left; padding: 12px;">Sedentary (Little/no exercise)</button>
+                                        <button type="button" class="segment-btn" data-value="1.375" style="text-align: left; padding: 12px;">Lightly Active (1-3 days/week)</button>
+                                        <button type="button" class="segment-btn" data-value="1.55" style="text-align: left; padding: 12px;">Moderately Active (3-5 days/week)</button>
+                                        <button type="button" class="segment-btn" data-value="1.725" style="text-align: left; padding: 12px;">Very Active (6-7 days/week)</button>
+                                        <button type="button" class="segment-btn" data-value="1.9" style="text-align: left; padding: 12px;">Extra Active (Physical job)</button>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="activity" value="1.2">
+                            </div>
+                            <div id="goal-section" class="form-group hidden" style="margin-top: 2rem;">
+                                <label>Goal</label>
+                                <div class="segment-control">
+                                    <button type="button" class="segment-btn" data-value="loss">Lose</button>
+                                    <button type="button" class="segment-btn active" data-value="maintain">Maintain</button>
+                                    <button type="button" class="segment-btn" data-value="gain">Gain</button>
+                                </div>
+                                <input type="hidden" id="goal" value="maintain">
+                            </div>
+                            <button type="button" class="btn-primary" id="btn-calculate">Calculate My Results</button>
+                            <button type="button" class="btn-secondary" id="btn-reset">Reset</button>
+                        </form>
+                    </div>
+                    <div>
+                        <div class="companion-panel">
+                            <div class="speech-bubble" id="speech-bubble" aria-live="polite">Hi! Let's get started. Tell me a bit about yourself.</div>
+                        </div>
+                        <div id="results-area" class="results-panel"></div>
+                    </div>
+                </div>
+                
+                <div class="mode-selector">
+                    <div class="mode-card active" data-mode="bmi" tabindex="0" role="button">
+                        <div class="mode-icon">⚖️</div>
+                        <h3>BMI</h3><p class="text-muted" style="font-size: 0.85rem; margin-top: 4px;">Understand your body mass index.</p>
+                    </div>
+                    <div class="mode-card" data-mode="calories" tabindex="0" role="button">
+                        <div class="mode-icon">🔥</div>
+                        <h3>Calories</h3><p class="text-muted" style="font-size: 0.85rem; margin-top: 4px;">Estimate your daily energy needs.</p>
+                    </div>
+                    <div class="mode-card" data-mode="bmr" tabindex="0" role="button">
+                        <div class="mode-icon">🫀</div>
+                        <h3>BMR</h3><p class="text-muted" style="font-size: 0.85rem; margin-top: 4px;">See your resting energy estimate.</p>
+                    </div>
+                    <div class="mode-card" data-mode="tdee" tabindex="0" role="button">
+                        <div class="mode-icon">⚡</div>
+                        <h3>TDEE</h3><p class="text-muted" style="font-size: 0.85rem; margin-top: 4px;">Total daily energy expenditure.</p>
+                    </div>
+                </div>
+                
+                <section class="faq-section" style="margin-top: 5rem; margin-bottom: 2rem;">
+                    <h2 class="text-center" style="margin-bottom: 2rem; font-size: 2rem;">Frequently Asked Questions</h2>
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <div class="insight-card"><h4>What is my BMI calculator?</h4><p class="desc">A BMI calculator evaluates your body mass index based on your height and weight to estimate whether you are at a healthy body weight.</p></div>
+                        <div class="insight-card"><h4>What's my BMI calculator?</h4><p class="desc">It is an online calculation tool used to categorize your current weight into healthy, underweight, overweight, or obese ranges based on standard formulas.</p></div>
+                        <div class="insight-card"><h4>What is my BMI woman calculator?</h4><p class="desc">A BMI calculator for women works exactly the same as for men, using the standard BMI formula to evaluate body weight against height.</p></div>
+                        <div class="insight-card"><h4>What is BMI calculator?</h4><p class="desc">A BMI calculator is a standard mathematical tool used globally to estimate body fat and assess potential health risks related to weight.</p></div>
+                        <div class="insight-card"><h4>What are the limitations of the BMI calculator?</h4><p class="desc">BMI does not account for muscle mass, bone density, overall body composition, or distribution of fat. It can occasionally misclassify highly muscular individuals.</p></div>
+                        <div class="insight-card"><h4>What is the purpose of calculating BMI?</h4><p class="desc">The purpose is to provide a quick, non-invasive screening method to identify potential weight categories that may lead to health issues.</p></div>
+                        <div class="insight-card"><h4>What is a good BMI for a man?</h4><p class="desc">A good, healthy BMI for an adult man generally falls between 18.5 and 24.9.</p></div>
+                        <div class="insight-card"><h4>What is a good BMI for a woman?</h4><p class="desc">A healthy BMI for an adult woman also typically falls within the 18.5 to 24.9 range.</p></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- =======================================================
+                 PAGE 2: ABOUT US
+                 ======================================================= -->
+            <div id="about" class="page-section">
+                <div class="page-header">
+                    <div class="standalone-mascot character-container char-idle mascot-blue">
+                        <svg viewBox="0 0 160 160" class="mascot" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="25" y="40" width="110" height="100" rx="45" class="body" />
+                            <circle cx="55" cy="75" r="5" class="eye" />
+                            <circle cx="105" cy="75" r="5" class="eye" />
+                            <path d="M 65 90 Q 80 82 95 90 Q 80 93 65 90 Z" class="mustache" />
+                            <path d="M 70 100 Q 80 110 90 100" class="mouth" />
+                            <path d="M 25 80 Q 10 90 15 110" class="arm" />
+                            <path d="M 135 80 Q 150 90 145 110" class="arm" />
+                            <path d="M 50 140 L 50 150" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
+                            <path d="M 110 140 L 110 150" stroke="var(--text)" stroke-width="6" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h1>About Us</h1>
+                    <p class="text-muted">Simple tools for understanding your numbers.</p>
+                </div>
+                <div class="clay-panel">
+                    <h2 style="margin-bottom: 1rem;">Our Mission</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--muted);">We believe that understanding your personal health metrics shouldn't require a medical degree or complicated spreadsheets. Our goal is to provide beautifully designed, easy-to-use calculators that help you estimate and track your fitness goals with confidence.</p>
+                    <h2 style="margin-bottom: 1rem;">Why We Built This</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--muted);">The internet is full of health calculators, but many of them are outdated, difficult to use on mobile devices, or filled with intrusive ads. We wanted to create a peaceful, premium experience that focuses purely on utility and user experience. Whether you prefer dark mode for late-night planning or light mode for daytime clarity, our tool adapts to you.</p>
+                    <h2 style="margin-bottom: 1rem;">Data Privacy First</h2>
+                    <p style="color: var(--muted);">Your personal health data (like your weight, age, and height) is processed entirely within your own web browser. We do not store, track, or save your calculations to any external servers. What happens on your screen stays on your screen.</p>
+                </div>
+            </div>
+
+            <!-- =======================================================
+                 PAGE 3: CONTACT US
+                 ======================================================= -->
+            <div id="contact" class="page-section">
+                <div class="page-header">
+                    <h1>Contact Us</h1>
+                    <p class="text-muted" style="max-width: 500px; margin: 0 auto;">Have a question, feedback, or need support? We'd love to hear from you. Fill out the form below.</p>
+                </div>
+                <div class="clay-panel" style="max-width: 700px; margin: 0 auto;">
+                    <form onsubmit="event.preventDefault(); alert('Thanks for reaching out! We will get back to you soon.');">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <div class="input-group"><input type="text" id="name" placeholder="John Doe" required></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <div class="input-group"><input type="email" id="email" placeholder="john@example.com" required></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <div class="input-group"><textarea id="message" placeholder="How can we help you?" required></textarea></div>
+                        </div>
+                        <button type="submit" class="btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- =======================================================
+                 PAGE 4: PRIVACY POLICY
+                 ======================================================= -->
+            <div id="privacy" class="page-section">
+                <div class="page-header">
+                    <h1>Privacy Policy</h1>
+                    <p class="text-muted">Last updated: August 2026</p>
+                </div>
+                <div class="clay-panel">
+                    <h2 style="margin-bottom: 1rem;">1. Information We Collect</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--muted);">We value your privacy. The health metrics you enter into our calculator (such as age, weight, height, and gender) are processed entirely on your local device (your browser). We do not collect, store, or transmit this personal health data to any external servers.</p>
+                    <h2 style="margin-bottom: 1rem;">2. Analytics and Tracking</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--muted);">To understand how our website is used and to improve your experience, we use Google Analytics. This service may collect non-personally identifiable information, such as your IP address, browser type, device type, and the pages you visit. Google Analytics uses cookies to track this data.</p>
+                    <h2 style="margin-bottom: 1rem;">3. Local Storage</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--muted);">We use your browser's Local Storage solely to save your display preference (Light Mode or Dark Mode). This ensures that your preferred theme is maintained when you revisit the site.</p>
+                    <h2 style="margin-bottom: 1rem;">4. Third-Party Links</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--muted);">Our website may contain links to third-party sites. We are not responsible for the privacy practices or content of those external websites.</p>
+                    <h2 style="margin-bottom: 1rem;">5. Contact Us</h2>
+                    <p style="color: var(--muted);">If you have any questions or concerns about this Privacy Policy, please contact us via our <a href="#contact" onclick="navigateTo('contact', event)" style="color: #3498DB;">Contact Page</a>.</p>
+                </div>
+            </div>
+
+            <!-- =======================================================
+                 PAGE 5: TERMS & CONDITIONS
+                 ======================================================= -->
+            <div id="terms" class="page-section">
+                <div class="page-header">
+                    <h1>Terms & Conditions</h1>
+                    <p class="text-muted">Last updated: August 2026</p>
+                </div>
+                <div class="clay-panel">
+                    <h2 style="margin-bottom: 1rem;">1. Acceptance of Terms</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--muted);">By accessing and using this website, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                    <h2 style="margin-bottom: 1rem;">2. Medical Disclaimer (Important)</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--muted);">All content and tools provided on this website are for informational and educational purposes only. <strong>The calculators provided do not constitute medical advice, diagnosis, or treatment.</strong> Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition, diet, or fitness program.</p>
+                    <h2 style="margin-bottom: 1rem;">3. Accuracy of Information</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--muted);">While we strive to keep our formulas and calculations as accurate and up-to-date as possible, we make no representations or warranties of any kind about the completeness, accuracy, reliability, suitability, or availability with respect to the website or the information contained on it.</p>
+                    <h2 style="margin-bottom: 1rem;">4. Limitation of Liability</h2>
+                    <p style="color: var(--muted);">In no event will we be liable for any loss or damage including without limitation, indirect or consequential loss or damage, or any loss or damage whatsoever arising from loss of data or profits arising out of, or in connection with, the use of this website.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- GLOBAL FOOTER -->
+    <footer>
+        <div class="footer-nav">
+            <a href="#calculator" onclick="navigateTo('calculator', event)">Calculator</a>
+            <a href="#about" onclick="navigateTo('about', event)">About Us</a>
+            <a href="#contact" onclick="navigateTo('contact', event)">Contact Us</a>
+            <a href="#privacy" onclick="navigateTo('privacy', event)">Privacy Policy</a>
+            <a href="#terms" onclick="navigateTo('terms', event)">Terms & Conditions</a>
+        </div>
+        <p><strong>BMI Calculator</strong> - Simple tools for understanding your numbers.</p>
+        <p style="margin-top: 10px; font-size: 0.8rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Disclaimer: These calculators provide estimates for informational purposes only. They are not medical advice or a diagnosis. Individual nutritional and health needs vary. For personalized guidance, consult a qualified healthcare professional.
+        </p>
+    </footer>
+
+    <script>
+        /* =========================================================
+           1. SINGLE PAGE APPLICATION (SPA) ROUTING LOGIC
+           ========================================================= */
+        function navigateTo(pageId, event) {
+            if(event) event.preventDefault();
+            
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show target page
+            const targetPage = document.getElementById(pageId);
+            if(targetPage) targetPage.classList.add('active');
+            
+            // Update active states in main nav
+            document.querySelectorAll('.main-nav a').forEach(el => {
+                el.classList.remove('active');
+                if(el.getAttribute('href') === '#' + pageId) {
+                    el.classList.add('active');
+                }
+            });
+            
+            // Update URL hash for link sharing and scrolling to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            history.pushState(null, null, `#${pageId}`);
+        }
+
+        // Handle page load with direct hash links (e.g., website.com/#about)
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.substring(1);
+            if (['calculator', 'about', 'contact', 'privacy', 'terms'].includes(hash)) {
+                navigateTo(hash);
+            }
+        });
+
+
+        /* =========================================================
+           2. THEME TOGGLING LOGIC
+           ========================================================= */
+        const btnLight = document.getElementById('theme-light');
+        const btnDark = document.getElementById('theme-dark');
+        const htmlDoc = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        btnLight.addEventListener('click', () => setTheme('light'));
+        btnDark.addEventListener('click', () => setTheme('dark'));
+
+        function setTheme(theme) {
+            htmlDoc.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if(theme === 'dark') {
+                btnDark.classList.add('active');
+                btnLight.classList.remove('active');
+            } else {
+                btnLight.classList.add('active');
+                btnDark.classList.remove('active');
+            }
+        }
+
+
+        /* =========================================================
+           3. CALCULATOR LOGIC
+           ========================================================= */
+        const state = { mode: 'bmi', inputs: { age: null, sex: 'male', heightMain: null, heightSub: null, heightUnit: 'cm', weightMain: null, weightSub: null, weightUnit: 'kg', activity: 1.2, goal: 'maintain' } };
+        const DOM = {
+            modeCards: document.querySelectorAll('.mode-card'), form: document.getElementById('health-form'),
+            age: document.getElementById('age'), sexBtns: document.querySelectorAll('#sex-group .segment-btn'), sexInput: document.getElementById('sex'),
+            hMain: document.getElementById('height-main'), hSub: document.getElementById('height-sub'), hUnit: document.getElementById('height-unit'), hSubGroup: document.getElementById('height-sub-group'),
+            wMain: document.getElementById('weight-main'), wSub: document.getElementById('weight-sub'), wUnit: document.getElementById('weight-unit'), wSubGroup: document.getElementById('weight-sub-group'),
+            activitySec: document.getElementById('activity-section'), activityBtns: document.querySelectorAll('#activity-section .segment-btn'), activityInput: document.getElementById('activity'),
+            goalSec: document.getElementById('goal-section'), goalBtns: document.querySelectorAll('#goal-section .segment-btn'), goalInput: document.getElementById('goal'),
+            errAge: document.getElementById('error-age'), errHeight: document.getElementById('error-height'), errWeight: document.getElementById('error-weight'),
+            btnCalc: document.getElementById('btn-calculate'), btnReset: document.getElementById('btn-reset'),
+            mascotCont: document.getElementById('mascot-container'), speechBubble: document.getElementById('speech-bubble'), resultsArea: document.getElementById('results-area')
+        };
+
+        function initCalculator() {
+            setupModeSwitching(); setupSegmentControls(); setupUnitToggles(); setupInputReactions();
+            DOM.btnCalc.addEventListener('click', handleCalculate); DOM.btnReset.addEventListener('click', resetCalculator);
+        }
+
+        function setupModeSwitching() {
+            DOM.modeCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    DOM.modeCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active'); state.mode = card.dataset.mode;
+                    switchCalculatorMode(); 
+                    window.scrollTo({ top: DOM.form.offsetTop - 50, behavior: 'smooth' });
+                });
+                card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } });
+            });
+        }
+
+        function setupSegmentControls() {
+            const groups = [DOM.sexBtns, DOM.activityBtns, DOM.goalBtns];
+            groups.forEach(group => {
+                group.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        group.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        document.getElementById(btn.parentNode.nextElementSibling.id).value = btn.dataset.value;
+                        setCharacterState('idle', 'Got it!');
+                    });
+                });
+            });
+        }
+
+        function setupUnitToggles() {
+            DOM.hUnit.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (val === 'ft-in') { DOM.hSubGroup.classList.remove('hidden'); DOM.hMain.placeholder = '5'; } 
+                else { DOM.hSubGroup.classList.add('hidden'); DOM.hMain.placeholder = val === 'cm' ? '175' : '1.75'; }
+                clearErrors();
+            });
+            DOM.wUnit.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (val === 'st-lb') { DOM.wSubGroup.classList.remove('hidden'); DOM.wMain.placeholder = '11'; } 
+                else { DOM.wSubGroup.classList.add('hidden'); const ph = { 'kg': '70', 'g': '70000', 'lb': '150', 'st': '11' }; DOM.wMain.placeholder = ph[val] || '0'; }
+                clearErrors();
+            });
+        }
+
+        function setupInputReactions() {
+            const inputs = [DOM.age, DOM.hMain, DOM.hSub, DOM.wMain, DOM.wSub];
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => { setCharacterState('thinking', getFocusMessage(input.id)); });
+                input.addEventListener('blur', () => { setCharacterState('idle', 'Looking good. What else?'); });
+            });
+        }
+
+        function getFocusMessage(id) {
+            if (id === 'age') return "How young are you?";
+            if (id.includes('height')) return "Let's check that height.";
+            if (id.includes('weight')) return "Got it. And your weight?";
+            return "Ready when you are!";
+        }
+
+        function switchCalculatorMode() {
+            DOM.resultsArea.classList.remove('show'); clearErrors();
+            DOM.activitySec.classList.add('hidden'); DOM.goalSec.classList.add('hidden');
+            let charColor = 'mascot-blue'; let msg = '';
+            if (state.mode === 'bmi') { msg = "Let's check your Body Mass Index together!"; } 
+            else if (state.mode === 'calories') { DOM.activitySec.classList.remove('hidden'); DOM.goalSec.classList.remove('hidden'); charColor = 'mascot-pink'; msg = "Let's figure out your daily calorie target."; } 
+            else if (state.mode === 'bmr') { charColor = 'mascot-mint'; msg = "BMR is your baseline energy. Let's calculate it."; } 
+            else if (state.mode === 'tdee') { DOM.activitySec.classList.remove('hidden'); charColor = 'mascot-peach'; msg = "TDEE includes your activity. Let's calculate!"; }
+            DOM.mascotCont.className = `character-container char-idle ${charColor}`; updateSpeechBubble(msg);
+        }
+
+        function setCharacterState(emotion, message) {
+            const classes = DOM.mascotCont.className.split(' ').filter(c => c.startsWith('mascot-'));
+            DOM.mascotCont.className = `character-container char-${emotion} ${classes.join(' ')}`;
+            if (message) updateSpeechBubble(message);
+        }
+
+        function updateSpeechBubble(text) {
+            DOM.speechBubble.style.animation = 'none'; DOM.speechBubble.offsetHeight; 
+            DOM.speechBubble.style.animation = 'float 4s ease-in-out infinite'; DOM.speechBubble.textContent = text;
+        }
+
+        function convertHeightToCm(val1, val2, unit) {
+            val1 = parseFloat(val1) || 0; val2 = parseFloat(val2) || 0;
+            switch(unit) { case 'cm': return val1; case 'm': return val1 * 100; case 'ft-in': return (val1 * 30.48) + (val2 * 2.54); default: return 0; }
+        }
+
+        function convertWeightToKg(val1, val2, unit) {
+            val1 = parseFloat(val1) || 0; val2 = parseFloat(val2) || 0;
+            switch(unit) { case 'kg': return val1; case 'g': return val1 / 1000; case 'lb': return val1 * 0.453592; case 'st': return val1 * 6.35029; case 'st-lb': return (val1 * 6.35029) + (val2 * 0.453592); default: return 0; }
+        }
+
+        function calculateBMI(kg, cm) { return parseFloat((kg / Math.pow(cm / 100, 2)).toFixed(1)); }
+        function getBMICategory(bmi, age) {
+            if (age < 18) return { label: 'Age < 18', class: 'status-under', msg: "BMI interpretation for youth requires specific growth charts." };
+            if (bmi < 18.5) return { label: 'Underweight', class: 'status-under', msg: "Your BMI is below the standard adult range. Focus on balanced nutrition." };
+            if (bmi >= 18.5 && bmi <= 24.9) return { label: 'Healthy weight', class: 'status-healthy', msg: "Great! Your BMI falls within the standard healthy range." };
+            if (bmi >= 25 && bmi <= 29.9) return { label: 'Overweight', class: 'status-over', msg: "Your BMI is above the standard adult range. Small consistent habits help." };
+            return { label: 'Obesity', class: 'status-obese', msg: "Your BMI falls in the obesity category. Consider discussing your health with a professional." };
+        }
+        function calculateHealthyWeightRange(cm) {
+            const m = cm / 100;
+            return `${(18.5 * (m * m)).toFixed(1)} - ${(24.9 * (m * m)).toFixed(1)} kg`;
+        }
+        function calculateBMR(kg, cm, age, sex) {
+            let base = (10 * kg) + (6.25 * cm) - (5 * age);
+            if (sex === 'male') return base + 5;
+            if (sex === 'female') return base - 161;
+            return base - 78;
+        }
+
+        function clearErrors() { DOM.errAge.style.display = 'none'; DOM.errHeight.style.display = 'none'; DOM.errWeight.style.display = 'none'; }
+        function validateInputs() {
+            clearErrors(); let isValid = true;
+            const age = parseInt(DOM.age.value); if (!age || age < 1 || age > 120) { DOM.errAge.style.display = 'block'; isValid = false; }
+            const cm = convertHeightToCm(DOM.hMain.value, DOM.hSub.value, DOM.hUnit.value); if (cm <= 0 || cm > 300) { DOM.errHeight.style.display = 'block'; isValid = false; }
+            const kg = convertWeightToKg(DOM.wMain.value, DOM.wSub.value, DOM.wUnit.value); if (kg <= 0 || kg > 500) { DOM.errWeight.style.display = 'block'; isValid = false; }
+            return isValid ? { age, cm, kg } : null;
+        }
+
+        function handleCalculate() {
+            const data = validateInputs();
+            if (!data) { setCharacterState('support', 'Oops! I need a little more valid information.'); return; }
+            DOM.btnCalc.style.transform = 'translateY(2px)'; setCharacterState('thinking', 'Crunching the numbers...');
+            setTimeout(() => { DOM.btnCalc.style.transform = ''; processResults(data); }, 600);
+        }
+
+        function processResults(data) {
+            const { age, cm, kg } = data; const sex = DOM.sexInput.value; const activity = parseFloat(DOM.activityInput.value); const goal = DOM.goalInput.value;
+            DOM.resultsArea.innerHTML = '';
+            if (state.mode === 'bmi') renderBMIResult(age, cm, kg);
+            else if (state.mode === 'bmr') renderBMRResult(age, sex, cm, kg);
+            else if (state.mode === 'tdee') renderTDEEResult(age, sex, cm, kg, activity);
+            else if (state.mode === 'calories') renderCalorieResult(age, sex, cm, kg, activity, goal);
+            DOM.resultsArea.classList.add('show'); DOM.resultsArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function renderBMIResult(age, cm, kg) {
+            const bmi = calculateBMI(kg, cm); const cat = getBMICategory(bmi, age); const range = calculateHealthyWeightRange(cm);
+            let markerPos = 0;
+            if (bmi < 18.5) markerPos = (bmi / 18.5) * 25; else if (bmi <= 24.9) markerPos = 25 + ((bmi - 18.5) / 6.4) * 35; else if (bmi <= 29.9) markerPos = 60 + ((bmi - 25) / 4.9) * 20; else markerPos = 80 + Math.min(((bmi - 30) / 10) * 20, 20);
+            const html = `<div class="result-primary"><h2>YOUR BMI</h2><div class="result-number" data-target="${bmi}">0</div><div class="result-label" style="background: var(--${cat.class}); color: #fff;">${cat.label}</div><div class="bmi-scale"><div class="scale-segment scale-under"></div><div class="scale-segment scale-healthy"></div><div class="scale-segment scale-over"></div><div class="scale-segment scale-obese"></div><div class="scale-marker" style="left: ${markerPos}%"></div></div></div>${age >= 18 ? `<div class="insight-grid"><div class="insight-card"><h4>Healthy Range</h4><div class="value">${range}</div><div class="desc">Estimated for your height</div></div><div class="insight-card"><h4>Current Weight</h4><div class="value">${kg.toFixed(1)} kg</div><div class="desc">Entered value</div></div></div>` : `<div class="insight-card" style="margin-top:2rem;"><h4>Youth Notice</h4><div class="desc">For children and teens, BMI is age and sex specific. Please consult pediatric growth charts.</div></div>`}`;
+            DOM.resultsArea.innerHTML = html; animateNumbers();
+            if (cat.class === 'status-healthy') setCharacterState('happy', cat.msg); else setCharacterState('idle', cat.msg);
+        }
+
+        function renderBMRResult(age, sex, cm, kg) {
+            const bmr = Math.round(calculateBMR(kg, cm, age, sex));
+            DOM.resultsArea.innerHTML = `<div class="result-primary"><h2>ESTIMATED BMR</h2><div class="result-number" data-target="${bmr}">0</div><div class="result-label" style="background: var(--status-under); color: #fff;">kcal / day</div></div><div class="insight-card"><h4>What is BMR?</h4><div class="desc">Basal Metabolic Rate is the energy your body needs to function at rest.</div></div>`;
+            animateNumbers(); setCharacterState('happy', "Here is your baseline resting energy estimate!");
+        }
+
+        function renderTDEEResult(age, sex, cm, kg, activity) {
+            const bmr = calculateBMR(kg, cm, age, sex); const tdee = Math.round(bmr * activity);
+            DOM.resultsArea.innerHTML = `<div class="result-primary"><h2>YOUR TDEE</h2><div class="result-number" data-target="${tdee}">0</div><div class="result-label" style="background: var(--status-over); color: #fff;">kcal / day</div></div><div class="insight-grid"><div class="insight-card"><h4>Base (BMR)</h4><div class="value">${Math.round(bmr)}</div><div class="desc">Energy at rest</div></div><div class="insight-card"><h4>Activity</h4><div class="value">+${Math.round(tdee - bmr)}</div><div class="desc">Energy from movement</div></div></div>`;
+            animateNumbers(); setCharacterState('happy', "That's your total daily energy expenditure based on activity!");
+        }
+
+        function renderCalorieResult(age, sex, cm, kg, activity, goal) {
+            const bmr = calculateBMR(kg, cm, age, sex); const tdee = Math.round(bmr * activity);
+            let target = tdee; let goalLabel = "Maintenance"; let colorClass = "status-healthy";
+            if (goal === 'loss') { target = tdee - 500; goalLabel = "Weight Loss Target"; colorClass = "status-under"; } else if (goal === 'gain') { target = tdee + 500; goalLabel = "Weight Gain Target"; colorClass = "status-over"; }
+            DOM.resultsArea.innerHTML = `<div class="result-primary"><h2>YOUR DAILY ESTIMATE</h2><div class="result-number" data-target="${target}">0</div><div class="result-label" style="background: var(--${colorClass}); color: #fff;">${goalLabel}</div></div><div class="insight-grid"><div class="insight-card"><h4>Maintenance</h4><div class="value">${tdee} kcal</div></div><div class="insight-card"><h4>BMR</h4><div class="value">${Math.round(bmr)} kcal</div></div></div>`;
+            animateNumbers();
+            let msg = "Your daily energy estimate is ready!";
+            if (goal === 'loss') msg = "That's an estimated moderate calorie deficit."; if (goal === 'gain') msg = "That's an estimated moderate calorie surplus.";
+            setCharacterState('happy', msg);
+        }
+
+        function animateNumbers() {
+            document.querySelectorAll('.result-number').forEach(counter => {
+                const target = +counter.getAttribute('data-target'); const isFloat = target % 1 !== 0;
+                const updateCount = () => {
+                    const count = +counter.innerText.replace(/,/g, ''); const inc = target / 200;
+                    if (count < target) { let nextVal = count + inc; if (nextVal > target) nextVal = target; counter.innerText = isFloat ? nextVal.toFixed(1) : Math.ceil(nextVal).toLocaleString(); setTimeout(updateCount, 10); } 
+                    else { counter.innerText = isFloat ? target.toFixed(1) : target.toLocaleString(); }
+                }; updateCount();
+            });
+        }
+
+        function resetCalculator() {
+            DOM.form.reset(); clearErrors(); DOM.resultsArea.classList.remove('show'); DOM.hSubGroup.classList.add('hidden'); DOM.wSubGroup.classList.add('hidden');
+            document.querySelectorAll('.segment-control').forEach(ctrl => { const btns = ctrl.querySelectorAll('.segment-btn'); if (btns.length > 0) { btns.forEach(b => b.classList.remove('active')); btns[0].classList.add('active'); } });
+            DOM.sexInput.value = 'male';
+            const actBtn = document.querySelector('#activity-section .segment-btn[data-value="1.2"]'); if(actBtn) { document.querySelectorAll('#activity-section .segment-btn').forEach(b => b.classList.remove('active')); actBtn.classList.add('active'); DOM.activityInput.value = '1.2'; }
+            const goalBtn = document.querySelector('#goal-section .segment-btn[data-value="maintain"]'); if(goalBtn) { document.querySelectorAll('#goal-section .segment-btn').forEach(b => b.classList.remove('active')); goalBtn.classList.add('active'); DOM.goalInput.value = 'maintain'; }
+            setCharacterState('idle', 'Cleared! Ready when you are.'); window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        initCalculator();
+    </script>
+</body>
+</html>
